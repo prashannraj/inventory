@@ -1,5 +1,31 @@
 RewriteEngine on
+RewriteBase /inventory/
+
+# Allow access to index.php, resources, and robots.txt
 RewriteCond $1 !^(index\.php|resources|robots\.txt)
+
+# Allow access to existing files and directories
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php/$1 [L,QSA]     
+
+# Redirect everything else to index.php
+RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+
+# Set environment variable for CodeIgniter
+SetEnv CI_ENV production
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# PHP settings for production
+<IfModule mod_php7.c>
+    php_value max_execution_time 300
+    php_value max_input_time 300
+    php_value memory_limit 256M
+    php_value post_max_size 50M
+    php_value upload_max_filesize 40M
+</IfModule>
